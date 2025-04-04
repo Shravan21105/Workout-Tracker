@@ -1,17 +1,18 @@
 package com.example.project;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-public class LoginActivity extends AppCompatActivity {
 
-    EditText username, password;
-    Button loginBtn, registerBtn;
+public class LoginActivity extends AppCompatActivity {
     DatabaseHelper dbHelper;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,22 +20,53 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         dbHelper = new DatabaseHelper(this);
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
-        loginBtn = findViewById(R.id.loginBtn);
-        registerBtn = findViewById(R.id.registerBtn);
+        sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-        loginBtn.setOnClickListener(v -> {
-            String user = username.getText().toString();
-            String pass = password.getText().toString();
-            if (dbHelper.checkUser(user, pass)) {
-                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+        if (sharedPreferences.getBoolean("isLoggedIn", false)) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
+
+        EditText etEmail = findViewById(R.id.etEmail);
+        EditText etPassword = findViewById(R.id.etPassword);
+        Button btnLogin = findViewById(R.id.btnLogin);
+        TextView tvRegister = findViewById(R.id.tvRegister);
+
+        tvRegister.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            finish();
+        });
+
+        btnLogin.setOnClickListener(v -> {
+            String email = etEmail.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (dbHelper.checkUser(email, password)) {
+                Cursor userData = dbHelper.getUserByEmail(email);
+                String name = "";
+                if (userData != null && userData.moveToFirst()) {
+                    name = userData.getString(1);
+                    userData.close();
+                }
+
+                Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("isLoggedIn", true);
+                editor.putString("userEmail", email);
+                editor.putString("userName", name);
+                editor.apply();
+
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
             } else {
                 Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
             }
         });
-
-        registerBtn.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
     }
 }

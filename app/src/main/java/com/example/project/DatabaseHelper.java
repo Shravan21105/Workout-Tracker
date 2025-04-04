@@ -7,31 +7,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "UserDatabase.db";
+    private static final int DATABASE_VERSION = 1;
 
-    private static final String DATABASE_NAME = "WorkoutTracker.db";
-    private static final int DATABASE_VERSION = 2; // Incremented version
-
-    // User Table
-    private static final String TABLE_USER = "users";
+    private static final String TABLE_USERS = "users";
     private static final String COLUMN_ID = "id";
-    private static final String COLUMN_USERNAME = "username";
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_PHONE = "phone";
     private static final String COLUMN_PASSWORD = "password";
+    private static final String COLUMN_WEIGHT = "weight";
+    private static final String COLUMN_HEIGHT = "height";
+    private static final String COLUMN_AGE = "age";
+    private static final String COLUMN_BMI = "bmi";
 
-    // Workout Table (Newly Added)
-    private static final String TABLE_WORKOUT = "workout";
+    private static final String TABLE_WORKOUTS = "workouts";
     private static final String COLUMN_WORKOUT_ID = "workout_id";
-    private static final String COLUMN_WORKOUT_NAME = "workout_name";
-
-    // Workout Progress Table
-    private static final String TABLE_PROGRESS = "progress";
-    private static final String COLUMN_DATE = "date";
-    private static final String COLUMN_WORKOUT = "workout";
-    private static final String COLUMN_REPS = "reps";
-    private static final String COLUMN_SETS = "sets";
-
-    // Notifications Table
-    private static final String TABLE_NOTIFICATIONS = "notifications";
-    private static final String COLUMN_TIME = "time";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,57 +30,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Creating User Table
-        String createUserTable = "CREATE TABLE " + TABLE_USER + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_USERNAME + " TEXT, " +
-                COLUMN_PASSWORD + " TEXT)";
-        db.execSQL(createUserTable);
+        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_NAME + " TEXT, "
+                + COLUMN_EMAIL + " TEXT UNIQUE, "
+                + COLUMN_PHONE + " TEXT, "
+                + COLUMN_PASSWORD + " TEXT, "
+                + COLUMN_WEIGHT + " REAL, "
+                + COLUMN_HEIGHT + " REAL, "
+                + COLUMN_AGE + " INTEGER, "
+                + COLUMN_BMI + " REAL)";
 
-        // Creating Workout Table
-        String createWorkoutTable = "CREATE TABLE " + TABLE_WORKOUT + " (" +
-                COLUMN_WORKOUT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_WORKOUT_NAME + " TEXT)";
-        db.execSQL(createWorkoutTable);
+        String CREATE_WORKOUTS_TABLE = "CREATE TABLE " + TABLE_WORKOUTS + "("
+                + COLUMN_WORKOUT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
 
-        // Creating Progress Table
-        String createProgressTable = "CREATE TABLE " + TABLE_PROGRESS + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_DATE + " TEXT, " +
-                COLUMN_WORKOUT + " TEXT, " +
-                COLUMN_REPS + " INTEGER, " +
-                COLUMN_SETS + " INTEGER)";
-        db.execSQL(createProgressTable);
-
-        // Creating Notifications Table
-        String createNotificationsTable = "CREATE TABLE " + TABLE_NOTIFICATIONS + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_TIME + " TEXT)";
-        db.execSQL(createNotificationsTable);
+        db.execSQL(CREATE_USERS_TABLE);
+        db.execSQL(CREATE_WORKOUTS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Dropping existing tables
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WORKOUT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROGRESS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
-
-        // Recreating tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WORKOUTS);
         onCreate(db);
     }
 
-    // Get User Data
-    public Cursor getUserData() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_USER + " LIMIT 1", null);
+    public boolean registerUser(String name, String email, String phone, String password, double weight, double height, int age) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        double bmi = calculateBMI(weight, height);
+
+        values.put(COLUMN_NAME, name);
+        values.put(COLUMN_EMAIL, email);
+        values.put(COLUMN_PHONE, phone);
+        values.put(COLUMN_PASSWORD, password);
+        values.put(COLUMN_WEIGHT, weight);
+        values.put(COLUMN_HEIGHT, height);
+        values.put(COLUMN_AGE, age);
+        values.put(COLUMN_BMI, bmi);
+
+        long result = db.insert(TABLE_USERS, null, values);
+        db.close();
+        return result != -1;
     }
 
-    // Get Workout Count
+    public boolean checkUser(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " +
+                COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?", new String[]{email, password});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
+    public Cursor getUserByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_EMAIL + "=?", new String[]{email});
+    }
+
     public int getWorkoutCount() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_PROGRESS, null);
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_WORKOUTS, null);
         int count = 0;
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
@@ -98,71 +99,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    // User Registration
-    public boolean registerUser(String username, String password) {
+    public boolean insertWorkout() {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USERNAME, username);
-        values.put(COLUMN_PASSWORD, password);
-        long result = db.insert(TABLE_USER, null, values);
+        long result = db.insert(TABLE_WORKOUTS, null, values);
+        db.close();
         return result != -1;
     }
 
-    // User Login
-    public boolean checkUser(String username, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE " + COLUMN_USERNAME + "=? AND " + COLUMN_PASSWORD + "=?", new String[]{username, password});
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
-    }
-
-    // Save Workout Progress
-    public boolean saveWorkoutProgress(String date, String workout, int reps, int sets) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_DATE, date);
-        values.put(COLUMN_WORKOUT, workout);
-        values.put(COLUMN_REPS, reps);
-        values.put(COLUMN_SETS, sets);
-        long result = db.insert(TABLE_PROGRESS, null, values);
-        return result != -1;
-    }
-
-    // Retrieve Workout Progress
-    public Cursor getWorkoutProgress() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_PROGRESS, null);
-    }
-
-    // Insert Workout Name
-    public boolean insertWorkout(String workoutName) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_WORKOUT_NAME, workoutName);
-        long result = db.insert(TABLE_WORKOUT, null, values);
-        return result != -1;
-    }
-
-    // Get All Workouts
-    public Cursor getAllWorkouts() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_WORKOUT, null);
-    }
-
-    // Set Notification Time
-    public boolean setNotificationTime(String time) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_TIME, time);
-        long result = db.insert(TABLE_NOTIFICATIONS, null, values);
-        return result != -1;
-    }
-
-    // Get Notification Time
-    public Cursor getNotificationTime() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS, null);
+    private double calculateBMI(double weight, double height) {
+        if (height <= 0) return 0.0;
+        return weight / ((height / 100) * (height / 100));
     }
 }
-

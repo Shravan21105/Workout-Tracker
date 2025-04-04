@@ -12,24 +12,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project"
         tools:targetApi="31">
-        <activity
-            android:name=".MainActivity"
+
+        <!-- LoginActivity (Startup Screen) -->
+        <activity android:name=".SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LoginActivity" android:exported="false"/>
 
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".RegisterActivity"/>
-        <activity android:name=".WorkoutSelectionActivity"/>
-        <activity android:name=".WorkoutDetailActivity"/>
-        <activity android:name=".ProgressActivity"/>
-        <activity android:name=".SettingsActivity"/>
-        <activity android:name=".DashboardActivity"/>
-        <activity android:name=".SplashScreenActivity"/>
+        <!-- MainActivity (After Login) -->
+        <activity android:name=".MainActivity" android:exported="false"/>
+
+        <!-- RegisterActivity -->
+        <activity android:name=".RegisterActivity" android:exported="false"/>
+
+        <!-- Other Activities -->
+        <activity android:name=".WorkoutSelectionActivity" android:exported="false"/>
+        <activity android:name=".WorkoutDetailActivity" android:exported="false"/>
+        <activity android:name=".ProgressActivity" android:exported="false"/>
+        <activity android:name=".SettingsActivity" android:exported="false"/>
+        <activity android:name=".DashboardActivity" android:exported="false"/>
+
     </application>
 
 </manifest>
