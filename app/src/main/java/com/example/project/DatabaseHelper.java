@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2; // increased version for upgrade
 
     private static final String TABLE_USERS = "users";
     private static final String COLUMN_ID = "id";
@@ -23,6 +23,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_WORKOUTS = "workouts";
     private static final String COLUMN_WORKOUT_ID = "workout_id";
+    private static final String COLUMN_WORKOUT_EMAIL = "email";
+    private static final String COLUMN_WORKOUT_DATE = "date";
+    private static final String COLUMN_WORKOUT_DETAILS = "details";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -42,7 +45,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_BMI + " REAL)";
 
         String CREATE_WORKOUTS_TABLE = "CREATE TABLE " + TABLE_WORKOUTS + "("
-                + COLUMN_WORKOUT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
+                + COLUMN_WORKOUT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_WORKOUT_EMAIL + " TEXT, "
+                + COLUMN_WORKOUT_DATE + " TEXT, "
+                + COLUMN_WORKOUT_DETAILS + " TEXT)";
 
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_WORKOUTS_TABLE);
@@ -50,6 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Drop tables if upgrading schema (you can migrate instead for production)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WORKOUTS);
         onCreate(db);
@@ -88,6 +95,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_EMAIL + "=?", new String[]{email});
     }
 
+    // Updated to reflect actual workouts
+    public boolean insertWorkout(String email, String date, String details) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_WORKOUT_EMAIL, email);
+        values.put(COLUMN_WORKOUT_DATE, date);
+        values.put(COLUMN_WORKOUT_DETAILS, details);
+        long result = db.insert(TABLE_WORKOUTS, null, values);
+        db.close();
+        return result != -1;
+    }
+
+    public String getWorkoutByDate(String email, String date) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + COLUMN_WORKOUT_DETAILS +
+                        " FROM " + TABLE_WORKOUTS +
+                        " WHERE " + COLUMN_WORKOUT_EMAIL + "=? AND " + COLUMN_WORKOUT_DATE + "=?",
+                new String[]{email, date});
+
+        if (cursor.moveToFirst()) {
+            String result = cursor.getString(0);
+            cursor.close();
+            return result;
+        } else {
+            cursor.close();
+            return null;
+        }
+    }
+
     public int getWorkoutCount() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_WORKOUTS, null);
@@ -97,14 +133,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return count;
-    }
-
-    public boolean insertWorkout() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        long result = db.insert(TABLE_WORKOUTS, null, values);
-        db.close();
-        return result != -1;
     }
 
     private double calculateBMI(double weight, double height) {

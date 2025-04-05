@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     Button btnStartWorkout, btnViewProgress, btnSettings, btnLogout;
 
+    String userEmail = ""; // Added to store the email
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,14 @@ public class MainActivity extends AppCompatActivity {
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
         String savedEmail = sharedPreferences.getString("userEmail", "");
 
-        if (!isLoggedIn || savedEmail.isEmpty()) {
+        // Get email from intent if passed
+        if (getIntent().hasExtra("userEmail")) {
+            userEmail = getIntent().getStringExtra("userEmail");
+        } else {
+            userEmail = savedEmail;
+        }
+
+        if (!isLoggedIn || userEmail.isEmpty()) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
@@ -50,13 +59,16 @@ public class MainActivity extends AppCompatActivity {
         btnSettings = findViewById(R.id.btnSettings);
         btnLogout = findViewById(R.id.btnLogout);
 
-        loadUserData(sharedPreferences, savedEmail);
+        loadUserData(sharedPreferences, userEmail);
 
         btnStartWorkout.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, WorkoutSelectionActivity.class)));
 
-        btnViewProgress.setOnClickListener(v ->
-                startActivity(new Intent(MainActivity.this, ProgressActivity.class)));
+        btnViewProgress.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProgressActivity.class);
+            intent.putExtra("userEmail", userEmail); // Pass email to ProgressActivity
+            startActivity(intent);
+        });
 
         btnSettings.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
