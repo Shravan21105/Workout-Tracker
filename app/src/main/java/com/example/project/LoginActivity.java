@@ -22,8 +22,12 @@ public class LoginActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
+        // Auto-login if already logged in
         if (sharedPreferences.getBoolean("isLoggedIn", false)) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            String email = sharedPreferences.getString("userEmail", "");
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("userEmail", email);  // Pass email for ProgressActivity
+            startActivity(intent);
             finish();
         }
 
@@ -56,13 +60,17 @@ public class LoginActivity extends AppCompatActivity {
 
                 Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show();
 
+                // Save to SharedPreferences
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("isLoggedIn", true);
                 editor.putString("userEmail", email);
                 editor.putString("userName", name);
                 editor.apply();
 
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                // Also send email through Intent
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("userEmail", email);
+                startActivity(intent);
                 finish();
             } else {
                 Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
