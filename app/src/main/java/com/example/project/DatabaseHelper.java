@@ -114,15 +114,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         " WHERE " + COLUMN_WORKOUT_EMAIL + "=? AND " + COLUMN_WORKOUT_DATE + "=?",
                 new String[]{email, date});
 
+        StringBuilder allWorkouts = new StringBuilder();
         if (cursor.moveToFirst()) {
-            String result = cursor.getString(0);
-            cursor.close();
-            return result;
-        } else {
-            cursor.close();
-            return null;
+            do {
+                String workout = cursor.getString(0);
+                allWorkouts.append("- ").append(workout).append("\n");
+            } while (cursor.moveToNext());
         }
+        cursor.close();
+        db.close();
+
+        return allWorkouts.length() > 0 ? allWorkouts.toString().trim() : null;
     }
+
 
     public int getWorkoutCount() {
         SQLiteDatabase db = this.getReadableDatabase();
