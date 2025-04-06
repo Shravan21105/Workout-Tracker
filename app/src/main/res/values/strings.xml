@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">project</string>
+
+    <string-array name="language_options">
+        <item>English</item>
+        <item>Hindi</item>
+        <item>Spanish</item>
+    </string-array>
+
+    <string-array name="timer_options">
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>45 seconds</item>
+        <item>60 seconds</item>
+    </string-array>
+
 </resources>
