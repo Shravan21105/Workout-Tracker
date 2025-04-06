@@ -82,14 +82,13 @@ public class MainActivity extends AppCompatActivity {
         totalWorkouts = findViewById(R.id.totalWorkouts);
         motivationText = findViewById(R.id.motivationText);
         unitTextView = findViewById(R.id.unitTextView);
-        timerText = findViewById(R.id.timerText);
         progressBar = findViewById(R.id.progressBar);
         btnStartWorkout = findViewById(R.id.btnStartWorkout);
         btnViewProgress = findViewById(R.id.btnViewProgress);
         btnSettings = findViewById(R.id.btnSettings);
 
         loadUserData(sharedPreferences, userEmail);
-        applyUserSettings(sharedPreferences);  // ⬅️ Apply the settings here
+        applyUserSettings(sharedPreferences);
 
         // Navigation
         btnStartWorkout.setOnClickListener(v ->
@@ -169,16 +168,7 @@ public class MainActivity extends AppCompatActivity {
             motivationText.setVisibility(View.GONE);
         }
 
-        // Rest Timer
-        int restSeconds = prefs.getInt("rest_timer", 30);
-        new CountDownTimer(restSeconds * 1000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                timerText.setText("Rest timer: " + millisUntilFinished / 1000 + "s");
-            }
 
-            public void onFinish() {
-                timerText.setText("Ready to GO!");
-            }
-        }.start();
+        }
     }
-}
+
