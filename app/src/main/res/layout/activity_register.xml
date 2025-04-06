@@ -4,182 +4,175 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:padding="24dp"
+    android:background="#F5F6F8"
     tools:context=".RegisterActivity">
 
-
+    <!-- App Logo -->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="96dp"
         android:layout_height="87dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="App Logo"
+        android:layout_marginTop="24dp"
         android:src="@mipmap/ic_launcher"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="App Logo"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Title -->
     <TextView
         android:id="@+id/registerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:text="Create Account"
-        android:textColor="@android:color/black"
         android:textSize="26sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        android:textColor="#222222"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageView" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
 
-    <EditText
-        android:id="@+id/regName"
+    <!-- Card Form Container -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardForm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Full Name"
-        android:inputType="textPersonName"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/registerTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/registerTitle" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Email -->
-    <EditText
-        android:id="@+id/regEmail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regName" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-    <!-- Phone Number -->
-    <EditText
-        android:id="@+id/regPhone"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Phone Number"
-        android:inputType="phone"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regEmail" />
+            <!-- Name -->
+            <EditText
+                android:id="@+id/regName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Full Name"
+                android:inputType="textPersonName"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp" />
 
-    <!-- Weight -->
-    <EditText
-        android:id="@+id/regWeight"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Weight (kg)"
-        android:inputType="numberDecimal"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regPhone" />
+            <!-- Email -->
+            <EditText
+                android:id="@+id/regEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginTop="12dp" />
 
-    <!-- Height -->
-    <EditText
-        android:id="@+id/regHeight"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Height (cm)"
-        android:inputType="numberDecimal"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regWeight" />
+            <!-- Phone -->
+            <EditText
+                android:id="@+id/regPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Phone Number"
+                android:inputType="phone"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginTop="12dp" />
 
-    <!-- Age -->
-    <EditText
-        android:id="@+id/regAge"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Age"
-        android:inputType="number"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regHeight" />
+            <!-- Weight -->
+            <EditText
+                android:id="@+id/regWeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Weight (kg)"
+                android:inputType="numberDecimal"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginTop="12dp" />
 
-    <!-- Password -->
-    <EditText
-        android:id="@+id/regPassword"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regAge" />
+            <!-- Height -->
+            <EditText
+                android:id="@+id/regHeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Height (cm)"
+                android:inputType="numberDecimal"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginTop="12dp" />
 
-    <!-- Confirm Password -->
-    <EditText
-        android:id="@+id/regConfirmPassword"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:hint="Confirm Password"
-        android:inputType="textPassword"
-        android:padding="10dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regPassword" />
+            <!-- Age -->
+            <EditText
+                android:id="@+id/regAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Age"
+                android:inputType="number"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginTop="12dp" />
 
-    <!-- Register Button -->
-    <Button
-        android:id="@+id/registerSubmitBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:padding="12dp"
-        android:text="Register"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/regConfirmPassword" />
+            <!-- Password -->
+            <EditText
+                android:id="@+id/regPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginTop="12dp" />
 
-    <!-- Already Registered? Login Text -->
+            <!-- Confirm Password -->
+            <EditText
+                android:id="@+id/regConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                android:backgroundTint="#CCCCCC"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_marginTop="12dp" />
+
+            <!-- Register Button -->
+            <Button
+                android:id="@+id/registerSubmitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:backgroundTint="@color/purple_700"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="20dp"
+                android:padding="14dp"
+                android:textSize="18sp"
+                android:background="@drawable/rounded_button" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Already registered text -->
     <TextView
         android:id="@+id/loginRedirect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:text="Already Registered? Login"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@color/purple_700"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardForm"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/registerSubmitBtn" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
