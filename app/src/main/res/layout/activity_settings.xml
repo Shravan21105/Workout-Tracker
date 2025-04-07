@@ -167,7 +167,7 @@
         android:id="@+id/about_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="This app helps you track your workouts and fitness progress. For more info, visit our website."
+        android:text="This app helps you track your workouts and fitness progress. It is currently in the Development Phase and some of the things are static. "
         android:textSize="14sp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/about_label"
