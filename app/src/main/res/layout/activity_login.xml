@@ -14,7 +14,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/fitlogo"
         android:layout_gravity="center"
         android:contentDescription="App Logo"/>
 

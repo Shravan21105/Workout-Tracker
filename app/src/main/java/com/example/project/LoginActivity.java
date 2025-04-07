@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -26,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         if (sharedPreferences.getBoolean("isLoggedIn", false)) {
             String email = sharedPreferences.getString("userEmail", "");
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("userEmail", email);  // Pass email for ProgressActivity
+            intent.putExtra("userEmail", email);  // Pass email for ProgressActivity or user info
             startActivity(intent);
             finish();
         }
@@ -54,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 Cursor userData = dbHelper.getUserByEmail(email);
                 String name = "";
                 if (userData != null && userData.moveToFirst()) {
-                    name = userData.getString(1);
+                    name = userData.getString(1); // Assuming name is in the second column
                     userData.close();
                 }
 
@@ -67,13 +68,14 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("userName", name);
                 editor.apply();
 
-                // Also send email through Intent
+                // Navigate to MainActivity
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("userEmail", email);
+                intent.putExtra("userName", name);
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
             }
         });
     }
